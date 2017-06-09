@@ -15,7 +15,7 @@ var bodyParser = require('body-parser')
 app.use(bodyParser.json())
 app.use(function (error, req, res, next) {
   if (error instanceof SyntaxError) {
-    sendError(res, 404, "Syntax Error");
+    sendError(res, 422, "Syntax Error");
   } else {
     next();
   }
@@ -52,7 +52,7 @@ app.all('/api/:feature/favorite/', function (req, res) {
         console.log(req.method)
         switch(req.method.toLowerCase()) {
             case "post":
-                res.send(db.push(nodeDB + "[]", req.body));
+                res.status(204).send(db.push(nodeDB + "[]", req.body));
                 break;
             case "get":
                 try {
