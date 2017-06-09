@@ -2,7 +2,7 @@
   "name": "GIFEmojiService",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,6 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "4.15.3"
-  }
+    "express": "^4.15.3",
+    "giphy-api": "^1.2.6",
+    "node-emoji": "^1.5.1"
+  },
+  "devDependencies": {}
 }
