@@ -35,18 +35,31 @@ app.get('/api/:feature/search/', function (req, res) {
     }
 })
 
-app.get('/api/:feature/favorite/', function (req, res) {
-    if (supportedFeatures.indexOf(req.params.feature) == -1) sendError(res, 404, "Unknown feature: " + req.params.feature);
+app.all('/api/:feature/favorite/', function (req, res) {
     try {
-        res.send(db.getData("/userid/" + req.params.feature));
-    } catch(err) {
-        res.send([])
-    }
-})
+        if (supportedFeatures.indexOf(req.params.feature) == -1) throw "Unsupported feature: " + req.params.feature;
+        if (!req.header("x-auth-user")) throw "No Authentification";
 
-app.post('/api/:feature/favorite/', function (req, res) {
-    if (supportedFeatures.indexOf(req.params.feature) == -1) sendError(res, 404, "Unknown feature: " + req.params.feature);
-    res.send(db.push("/userid/" + req.params.feature + "[]", req.body));
+        var nodeDB = [,req.header("x-auth-user"), req.params.feature].join("/");
+        console.log(nodeDB)
+        console.log(req.method)
+        switch(req.method.toLowerCase()) {
+            case "post":
+                res.send(db.push(nodeDB + "[]", req.body));
+                break;
+            case "get":
+                try {
+                    res.send(db.getData(nodeDB));
+                } catch(err) {
+                    res.send([]);
+                }
+                break;
+            default:
+                throw "Unsupported method"
+        }
+    } catch(err) {
+        sendError(res, 404, err);
+    }
 })
 
 var port = process.env.port || 8080;
