@@ -13,6 +13,13 @@ function sendError(res, status, err) {
 
 var bodyParser = require('body-parser')
 app.use(bodyParser.json())
+app.use(function (error, req, res, next) {
+  if (error instanceof SyntaxError) {
+    sendError(res, 404, "Syntax Error");
+  } else {
+    next();
+  }
+});
 
 app.get('/api/:feature/search/', function (req, res) {
     try {
