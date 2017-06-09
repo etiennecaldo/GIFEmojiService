@@ -5,7 +5,7 @@ var emoji = require('node-emoji')
 var JsonDB = require('node-json-db');
 var db = new JsonDB("myDataBase", true, true);
 
-var supportedFeatures = ["emojis", "gifs"];
+var featuresRegExp = ":feature(emojis|gifs)";
 
 function sendError(res, status, err) {
     res.status(status).send({"error":err});
@@ -21,7 +21,7 @@ app.use(function (error, req, res, next) {
   }
 });
 
-app.get('/api/:feature/search/', function (req, res) {
+app.get('/api/' + featuresRegExp + '/search/', function (req, res) {
     try {
         switch(req.params.feature) {
             case 'emojis':
@@ -42,14 +42,13 @@ app.get('/api/:feature/search/', function (req, res) {
     }
 })
 
-app.all('/api/:feature/favorite/', function (req, res) {
+app.all('/api/' + featuresRegExp + '/favorite/', function (req, res) {
     try {
-        if (supportedFeatures.indexOf(req.params.feature) == -1) throw "Unsupported feature: " + req.params.feature;
         if (!req.header("x-auth-user")) throw "No Authentification";
 
         var nodeDB = [,req.header("x-auth-user"), req.params.feature].join("/");
-        console.log(nodeDB)
-        console.log(req.method)
+        //console.log(nodeDB)
+        //console.log(req.method)
         switch(req.method.toLowerCase()) {
             case "post":
                 res.status(204).send(db.push(nodeDB + "[]", req.body));
